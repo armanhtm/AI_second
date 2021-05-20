@@ -96,7 +96,7 @@ def competenceFunction(level, kromozom):
     if live:
         score *= 1.1
 
-    print(sequence, step, score, live)
+    #print(sequence, step, score, live)
     return (sequence + step) * score
 
 
@@ -151,6 +151,8 @@ def Recombination_main(kromozoms_parent, multiplication):
     kromozoms_child = []
     counter = -1
     while counter < len(kromozoms_parent) - 1:
+        if counter+1 >= len(kromozoms_parent) or counter+2 >= len(kromozoms_parent):
+            break
         for kromozom in Recombination(kromozoms_parent[counter + 1], kromozoms_parent[counter + 2], multiplication):
             kromozoms_child.append(kromozom)
         counter += 2
@@ -189,11 +191,27 @@ def Mutation_main(kromozoms, possibility, bit_number, oriented):
 kromozoms = []
 kromozoms_class = []
 level = input("enter level:")
-kromozoms = new_kromozoms(200, 12)
-for kromozom in kromozoms:
-    kromozoms_class.append(kromozom_class(kromozom, competenceFunction(level, kromozom)))
-selected_kromozoms_class = select(0, 100, kromozoms_class)
+kromozoms = new_kromozoms(12, 50)
+#print("jkdfj",kromozoms[0])
+#print(select(0,5,kromozoms))
+print("start")
+for i in range(200):
+    for kromozom in kromozoms:
+        number = competenceFunction(level, kromozom)
+        p1 = kromozom_class(kromozom,number )
+        kromozoms_class.append(p1)
+    selected_kromozoms_class = select(0, 100, kromozoms_class)
+    print(selected_kromozoms_class[0].score,"   ",selected_kromozoms_class[0].kromozom)
+    selected_kromozoms = []
+    for kromozom_class_0 in selected_kromozoms_class:
+        selected_kromozoms.append(kromozom_class_0.kromozom)
+    recombination_kromozoms = []
+    recombination_kromozoms = Recombination_main(selected_kromozoms, 4)
+    mutation_kromozoms = []
+    mutation_kromozoms = Mutation_main(recombination_kromozoms,50,1,False)
+    kromozoms = mutation_kromozoms
 
+#print(select(0 , 5 , kromozoms))
 
 
 
@@ -214,12 +232,13 @@ l3 = [10, 11, 12, 13, 14]
 l4 = [15, 16, 17, 18, 19]
 l_main = []
 l_main.append(l)
-
+#print("jldkjfjdlkj")
+#print(new_kromozoms(2,5))
 l_main.append(l2)
 l_main.append(l3)
-l_main.append(l4)
+#l_main.append(l4)
 # print(Recombination_main(l_main, 4))
-print(Mutation_main(l_main, 100, 1, False))
+#print(Mutation_main(l_main, 100, 1, False))
 # kromozoms = newKromozom(5, 6)
 # print(kromozoms)
 # print(competenceFunction("____G_ML__G_", [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1]))
