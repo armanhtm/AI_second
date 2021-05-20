@@ -1,6 +1,7 @@
 import operator
 from random import randint
 from toolz import partition
+import matplotlib.pyplot as plt
 
 
 # this class hold information of kromozom
@@ -188,13 +189,26 @@ def Mutation_main(kromozoms, possibility, bit_number, oriented):
     return kromozoms
 
 
+def show_graph(y, x, title, x_label, y_label):
+    plt.plot(y, x)
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.show()
+
+
+
+
 kromozoms = []
 kromozoms_class = []
 level = input("enter level:")
-kromozoms = new_kromozoms(12, 50)
+kromozoms = new_kromozoms(len(level), 50)
 #print("jkdfj",kromozoms[0])
 #print(select(0,5,kromozoms))
 print("start")
+best = []
+index = []
+worst = []
 for i in range(200):
     for kromozom in kromozoms:
         number = competenceFunction(level, kromozom)
@@ -202,19 +216,22 @@ for i in range(200):
         kromozoms_class.append(p1)
     selected_kromozoms_class = select(0, 100, kromozoms_class)
     print(selected_kromozoms_class[0].score,"   ",selected_kromozoms_class[0].kromozom)
+    best.append(selected_kromozoms_class[0].score)
+    index.append(i)
+    worst.append(selected_kromozoms_class[len(selected_kromozoms_class)-1].score)
     selected_kromozoms = []
     for kromozom_class_0 in selected_kromozoms_class:
         selected_kromozoms.append(kromozom_class_0.kromozom)
     recombination_kromozoms = []
     recombination_kromozoms = Recombination_main(selected_kromozoms, 4)
     mutation_kromozoms = []
-    mutation_kromozoms = Mutation_main(recombination_kromozoms,50,1,False)
+    mutation_kromozoms = Mutation_main(recombination_kromozoms,20,1,False)
     kromozoms = mutation_kromozoms
 
 #print(select(0 , 5 , kromozoms))
 
 
-
+show_graph(index,best,"aaa","jk","jkdj")
 
 
 p1 = kromozom_class("ali", 10)
