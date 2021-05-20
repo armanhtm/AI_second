@@ -15,7 +15,7 @@ class kromozom_class:
 
 
 # this function create new random kromozoms
-def newKromozom(number, length):
+def new_kromozoms(number, length):
     kromozoms = [[randint(0, 2) for i in range(number)] for j in range(length)]
     return kromozoms
 
@@ -128,12 +128,75 @@ def select(chance, number, kromozoms):
             kromozoms[i].chance_number(sum_score, sum_score + kromozoms[i].score)
             sum_score += kromozoms[i].score
         for i in range(number):
-            random = randint(0, sum_score)
+            random = randint(1, sum_score)
             for kromozom0 in kromozoms:
                 if kromozom0.first <= random <= kromozom0.second:
                     output_kromozom.append(kromozom0)
 
         return output_kromozom
+
+
+# this function is for Recombinance two kromozom to childs
+def Recombination(parent_kromozom1, parent_kromozom2, child_number):
+    child_kromozom = []
+    for i in range(child_number):
+        random = randint(1, len(parent_kromozom1))
+        child_kromozom.append(parent_kromozom1[:random] + parent_kromozom2[random:])
+        child_kromozom.append(parent_kromozom2[:random] + parent_kromozom1[random:])
+    return child_kromozom
+
+
+# this function is for Recombination in main
+def Recombination_main(kromozoms_parent, multiplication):
+    kromozoms_child = []
+    counter = -1
+    while counter < len(kromozoms_parent) - 1:
+        for kromozom in Recombination(kromozoms_parent[counter + 1], kromozoms_parent[counter + 2], multiplication):
+            kromozoms_child.append(kromozom)
+        counter += 2
+    return kromozoms_child
+
+
+# possibility is between 0 to 100
+# bit number that have mutation
+# mutation is oriented or not
+# mutation function
+def Mutation(kromozom, possibility, bit_number, oriented):
+    if not oriented:
+        possibility_random_number = randint(0, 100)
+        if possibility_random_number < possibility:
+            for counter in range(bit_number):
+                bit_random_number = randint(0, len(kromozom) - 1)
+                bit_random_value = randint(0, 2)
+                kromozom[bit_random_number] = bit_random_value
+
+        return kromozom
+
+    if oriented:
+        pass
+
+
+# possibility is between 0 to 100
+# bit number that have mutation
+# mutation is oriented or not
+# mutation main function
+def Mutation_main(kromozoms, possibility, bit_number, oriented):
+    for kromozom in kromozoms:
+        Mutation(kromozom, possibility, bit_number, oriented)
+    return kromozoms
+
+
+kromozoms = []
+kromozoms_class = []
+level = input("enter level:")
+kromozoms = new_kromozoms(200, 12)
+for kromozom in kromozoms:
+    kromozoms_class.append(kromozom_class(kromozom, competenceFunction(level, kromozom)))
+selected_kromozoms_class = select(0, 100, kromozoms_class)
+
+
+
+
 
 
 p1 = kromozom_class("ali", 10)
@@ -143,9 +206,20 @@ array = []
 array.append(p1)
 array.append(p2)
 array.append(p3)
-for kromozom in select(50, 2, array):
-    print(kromozom.score)
+# for kromozom in select(50, 2, array):
+#    print(kromozom.score)
+l = [0, 1, 2, 3, 4]
+l2 = [5, 6, 7, 8, 9]
+l3 = [10, 11, 12, 13, 14]
+l4 = [15, 16, 17, 18, 19]
+l_main = []
+l_main.append(l)
 
+l_main.append(l2)
+l_main.append(l3)
+l_main.append(l4)
+# print(Recombination_main(l_main, 4))
+print(Mutation_main(l_main, 100, 1, False))
 # kromozoms = newKromozom(5, 6)
 # print(kromozoms)
 # print(competenceFunction("____G_ML__G_", [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1]))
