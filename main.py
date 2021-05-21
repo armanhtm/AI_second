@@ -134,23 +134,38 @@ def select(chance, number, kromozoms):
 
 
 # this function is for Recombinance two kromozom to childs
-def Recombination(parent_kromozom1, parent_kromozom2, child_number):
+def Recombination(parent_kromozom1, parent_kromozom2, child_number, single_dot):
     child_kromozom = []
-    for i in range(child_number):
-        random = randint(1, len(parent_kromozom1))
-        child_kromozom.append(parent_kromozom1[:random] + parent_kromozom2[random:])
-        child_kromozom.append(parent_kromozom2[:random] + parent_kromozom1[random:])
-    return child_kromozom
-
+    if single_dot:
+        for i in range(child_number):
+            random = randint(1, len(parent_kromozom1))
+            child_kromozom.append(parent_kromozom1[:random] + parent_kromozom2[random:])
+            child_kromozom.append(parent_kromozom2[:random] + parent_kromozom1[random:])
+        return child_kromozom
+    else:
+        for i in range(child_number):
+            random1 = 0
+            random2 = 0
+            while random1 != random2:
+                random1 = randint(1, len(parent_kromozom1))
+                random2 = randint(1, len(parent_kromozom1))
+            child = []
+            for i in range(len(parent_kromozom1)):
+                if i < random1 or i > random2:
+                    child.append(parent_kromozom1[i])
+                else:
+                    child.append(parent_kromozom2[i])
+            child_kromozom.append(child)
+        return child_kromozom
 
 # this function is for Recombination in main
-def Recombination_main(kromozoms_parent, multiplication):
+def Recombination_main(kromozoms_parent, multiplication,single_dot):
     kromozoms_child = []
     counter = -1
     while counter < len(kromozoms_parent) - 1:
-        if counter+1 >= len(kromozoms_parent) or counter+2 >= len(kromozoms_parent):
+        if counter+1 >= len(kromozoms_parent):
             break
-        for kromozom in Recombination(kromozoms_parent[counter + 1], kromozoms_parent[counter + 2], multiplication):
+        for kromozom in Recombination(kromozoms_parent[counter + 1], kromozoms_parent[counter + 2], multiplication,single_dot):
             kromozoms_child.append(kromozom)
         counter += 2
     return kromozoms_child
@@ -205,7 +220,7 @@ print("start")
 best = []
 index = []
 worst = []
-for i in range(100):
+for i in range(200):
     for kromozom in kromozoms:
         number = competenceFunction(level, kromozom)
         p1 = kromozom_class(kromozom,number )
@@ -219,7 +234,7 @@ for i in range(100):
     for kromozom_class_0 in selected_kromozoms_class:
         selected_kromozoms.append(kromozom_class_0.kromozom)
     recombination_kromozoms = []
-    recombination_kromozoms = Recombination_main(selected_kromozoms, 4)
+    recombination_kromozoms = Recombination_main(selected_kromozoms, 4,False)
     mutation_kromozoms = []
     mutation_kromozoms = Mutation_main(recombination_kromozoms,20,1,False)
     kromozoms = mutation_kromozoms
