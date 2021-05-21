@@ -1,6 +1,7 @@
 import operator
+import random
 from random import randint
-from toolz import partition
+
 import matplotlib.pyplot as plt
 
 
@@ -9,10 +10,6 @@ class kromozom_class:
     def __init__(self, kromozom, score):
         self.kromozom = kromozom
         self.score = score
-
-    def chance_number(self, first, second):
-        self.first = first
-        self.second = second
 
 
 # this function create new random kromozoms
@@ -124,16 +121,15 @@ def select(chance, number, kromozoms):
     # select with chance and score
     if chance == 50:
         sum_score = 0
+        kromozoms.sort(key=lambda x: x.score, reverse=False)
         output_kromozom = []
         for i in range(len(kromozoms)):
-            kromozoms[i].chance_number(sum_score, sum_score + kromozoms[i].score)
             sum_score += kromozoms[i].score
         for i in range(number):
-            random = randint(1, sum_score)
-            for kromozom0 in kromozoms:
-                if kromozom0.first <= random <= kromozom0.second:
-                    output_kromozom.append(kromozom0)
-
+            #random = randint(int(sum_score / 2), sum_score)
+            rand = pow(random.random(),0.25)
+            rand = int(rand * len(kromozoms))
+            output_kromozom.append(kromozoms[rand])
         return output_kromozom
 
 
@@ -202,19 +198,19 @@ def show_graph(y, x, title, x_label, y_label):
 kromozoms = []
 kromozoms_class = []
 level = input("enter level:")
-kromozoms = new_kromozoms(len(level), 50)
+kromozoms = new_kromozoms(len(level), 200)
 #print("jkdfj",kromozoms[0])
 #print(select(0,5,kromozoms))
 print("start")
 best = []
 index = []
 worst = []
-for i in range(200):
+for i in range(100):
     for kromozom in kromozoms:
         number = competenceFunction(level, kromozom)
         p1 = kromozom_class(kromozom,number )
         kromozoms_class.append(p1)
-    selected_kromozoms_class = select(0, 100, kromozoms_class)
+    selected_kromozoms_class = select(50, 100, kromozoms_class)
     print(selected_kromozoms_class[0].score,"   ",selected_kromozoms_class[0].kromozom)
     best.append(selected_kromozoms_class[0].score)
     index.append(i)
@@ -231,31 +227,4 @@ for i in range(200):
 #print(select(0 , 5 , kromozoms))
 
 
-show_graph(index,best,"aaa","jk","jkdj")
-
-
-p1 = kromozom_class("ali", 10)
-p2 = kromozom_class("alli", 40)
-p3 = kromozom_class("allli", 30)
-array = []
-array.append(p1)
-array.append(p2)
-array.append(p3)
-# for kromozom in select(50, 2, array):
-#    print(kromozom.score)
-l = [0, 1, 2, 3, 4]
-l2 = [5, 6, 7, 8, 9]
-l3 = [10, 11, 12, 13, 14]
-l4 = [15, 16, 17, 18, 19]
-l_main = []
-l_main.append(l)
-#print("jldkjfjdlkj")
-#print(new_kromozoms(2,5))
-l_main.append(l2)
-l_main.append(l3)
-#l_main.append(l4)
-# print(Recombination_main(l_main, 4))
-#print(Mutation_main(l_main, 100, 1, False))
-# kromozoms = newKromozom(5, 6)
-# print(kromozoms)
-# print(competenceFunction("____G_ML__G_", [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1]))
+show_graph(index,best,"max score","generation","score")
