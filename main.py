@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 
 # this class hold information of kromozom
 class kromozom_class:
-    def __init__(self, kromozom, score):
+    def __init__(self, kromozom, score, live):
         self.kromozom = kromozom
         self.score = score
+        self.live = live
 
 
 # this function create new random kromozoms
@@ -85,6 +86,10 @@ def competenceFunction(level, kromozom):
                     sequence = sequence_counter
                 sequence_counter = 0
 
+        if (kromozom[i - 1] == 2 or kromozom[i - 1] == 1) and kromozom[i] != 0:
+            live = False
+            score -= 10
+
         if sequence_counter > sequence:
             sequence = sequence_counter
 
@@ -94,40 +99,27 @@ def competenceFunction(level, kromozom):
     if live:
         score *= 1.1
 
-    #print(sequence, step, score, live)
-    return (sequence + step) * score
+    # print(sequence, step, score, live)
+    return (sequence + step) * score, live
 
 
 # this function selects number kromozom with chance percentage
 def select(chance, number, kromozoms):
     # no chance
-    if chance == 0:
+    if chance == False:
         kromozoms.sort(key=lambda x: x.score, reverse=True)
         return kromozoms[:number]
 
-    # completely chance
-    if chance == 100:
-        output_kromozoms = []
-        kromozoms_index = []
-        counter = number
-        while counter != 0:
-            i = randint(0, len(kromozoms) - 1)
-            if not kromozoms_index.__contains__(i):
-                kromozoms_index.append(i)
-                output_kromozoms.append(kromozoms[i])
-                counter -= 1
-        return output_kromozoms
-
     # select with chance and score
-    if chance == 50:
+    if chance == True:
         sum_score = 0
         kromozoms.sort(key=lambda x: x.score, reverse=False)
         output_kromozom = []
         for i in range(len(kromozoms)):
             sum_score += kromozoms[i].score
         for i in range(number):
-            #random = randint(int(sum_score / 2), sum_score)
-            rand = pow(random.random(),0.25)
+            # random = randint(int(sum_score / 2), sum_score)
+            rand = pow(random.random(), 0.25)
             rand = int(rand * len(kromozoms))
             output_kromozom.append(kromozoms[rand])
         return output_kromozom
@@ -158,14 +150,16 @@ def Recombination(parent_kromozom1, parent_kromozom2, child_number, single_dot):
             child_kromozom.append(child)
         return child_kromozom
 
+
 # this function is for Recombination in main
-def Recombination_main(kromozoms_parent, multiplication,single_dot):
+def Recombination_main(kromozoms_parent, multiplication, single_dot):
     kromozoms_child = []
     counter = -1
     while counter < len(kromozoms_parent) - 1:
-        if counter+1 >= len(kromozoms_parent):
+        if counter + 1 >= len(kromozoms_parent):
             break
-        for kromozom in Recombination(kromozoms_parent[counter + 1], kromozoms_parent[counter + 2], multiplication,single_dot):
+        for kromozom in Recombination(kromozoms_parent[counter + 1], kromozoms_parent[counter + 2], multiplication,
+                                      single_dot):
             kromozoms_child.append(kromozom)
         counter += 2
     return kromozoms_child
@@ -208,38 +202,63 @@ def show_graph(y, x, title, x_label, y_label):
     plt.show()
 
 
+def calculate_average_score(kromozoms):
+    sum_score = 0
+    for kromozom in kromozoms:
+        sum_score += kromozom.score
+
+    return sum_score / len(kromozoms)
 
 
 kromozoms = []
 kromozoms_class = []
 level = input("enter level:")
+generation_number = int(input("Generation number:"))
+chance_number = int(input("1=best selection or 2=best_chance selection?(1/2):"))
+recombination_dot_number = input("single dot recombination:(y/n)")
+if recombination_dot_number == 'y':
+    single_dot = True
+else:
+    single_dot = False
+mutation_percentage = int(input("Percentage of Mutation :"))
+if chance_number == 1:
+    chance = False
+else:
+    chance = True
 kromozoms = new_kromozoms(len(level), 200)
-#print("jkdfj",kromozoms[0])
-#print(select(0,5,kromozoms))
 print("start")
 best = []
 index = []
 worst = []
-for i in range(200):
+average = []
+for i in range(generation_number):
     for kromozom in kromozoms:
-        number = competenceFunction(level, kromozom)
-        p1 = kromozom_class(kromozom,number )
+        number = competenceFunction(level, kromozom)[0]
+        live = competenceFunction(level, kromozom)[1]
+        p1 = kromozom_class(kromozom, number, live)
         kromozoms_class.append(p1)
-    selected_kromozoms_class = select(50, 100, kromozoms_class)
-    print(selected_kromozoms_class[0].score,"   ",selected_kromozoms_class[0].kromozom)
+    selected_kromozoms_class = select(chance, 100, kromozoms_class)
+    selected_kromozoms_class.sort(key=lambda x: x.score, reverse=True)
+    last = len(selected_kromozoms_class) - 1
+    average_score = calculate_average_score(selected_kromozoms_class)
+    print(i, "-->", "best:", selected_kromozoms_class[0].score, "   ", selected_kromozoms_class[0].live, "   ",
+          selected_kromozoms_class[0].kromozom)
+    print("      ", "worst:", selected_kromozoms_class[last].score, "   ", selected_kromozoms_class[last].live, "   ",
+          selected_kromozoms_class[last].kromozom)
+    print("      ", "average:", average_score)
     best.append(selected_kromozoms_class[0].score)
     index.append(i)
-    worst.append(selected_kromozoms_class[len(selected_kromozoms_class)-1].score)
+    worst.append(selected_kromozoms_class[len(selected_kromozoms_class) - 1].score)
+    average.append(average_score)
     selected_kromozoms = []
     for kromozom_class_0 in selected_kromozoms_class:
         selected_kromozoms.append(kromozom_class_0.kromozom)
     recombination_kromozoms = []
-    recombination_kromozoms = Recombination_main(selected_kromozoms, 4,False)
+    recombination_kromozoms = Recombination_main(selected_kromozoms, 4, single_dot)
     mutation_kromozoms = []
-    mutation_kromozoms = Mutation_main(recombination_kromozoms,20,1,False)
+    mutation_kromozoms = Mutation_main(recombination_kromozoms, mutation_percentage,1,False)
     kromozoms = mutation_kromozoms
 
-#print(select(0 , 5 , kromozoms))
-
-
-show_graph(index,best,"max score","generation","score")
+show_graph(index, best, "best_score_graph", "generation", "score")
+show_graph(index, worst, "worst_score_graph", "generation", "score")
+show_graph(index, average, "average_score_graph", "generation", "score")
