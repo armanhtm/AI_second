@@ -194,12 +194,9 @@ def Mutation_main(kromozoms, possibility, bit_number, oriented):
     return kromozoms
 
 
-def show_graph(y, x, title, x_label, y_label):
-    plt.plot(y, x)
-    plt.title(title)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-    plt.show()
+
+
+
 
 
 def calculate_average_score(kromozoms):
@@ -259,6 +256,11 @@ for i in range(generation_number):
     mutation_kromozoms = Mutation_main(recombination_kromozoms, mutation_percentage,1,False)
     kromozoms = mutation_kromozoms
 
-show_graph(index, best, "best_score_graph", "generation", "score")
-show_graph(index, worst, "worst_score_graph", "generation", "score")
-show_graph(index, average, "average_score_graph", "generation", "score")
+plt.plot(index, best,label="best_score")
+plt.plot(index, worst, label="worst_score")
+plt.plot(index, average, label="average_score")
+plt.title("Graph")
+plt.xlabel("Generation")
+plt.ylabel("Score")
+plt.legend()
+plt.show()
