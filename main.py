@@ -1,7 +1,7 @@
 import operator
 import random
 from random import randint
-
+import turtle
 import matplotlib.pyplot as plt
 
 
@@ -207,6 +207,13 @@ def calculate_average_score(kromozoms):
     return sum_score / len(kromozoms)
 
 
+def list_to_string(list_int):
+    string_ints = [str(element) for element in list_int]
+    string = ""
+    for i in string_ints:
+        string += i
+    return string
+
 kromozoms = []
 kromozoms_class = []
 level = input("enter level:")
@@ -228,6 +235,7 @@ best = []
 index = []
 worst = []
 average = []
+output_kromozoms_class = []
 for i in range(generation_number):
     for kromozom in kromozoms:
         number = competenceFunction(level, kromozom)[0]
@@ -248,6 +256,7 @@ for i in range(generation_number):
     worst.append(selected_kromozoms_class[len(selected_kromozoms_class) - 1].score)
     average.append(average_score)
     selected_kromozoms = []
+    output_kromozoms_class = selected_kromozoms_class[0].kromozom
     for kromozom_class_0 in selected_kromozoms_class:
         selected_kromozoms.append(kromozom_class_0.kromozom)
     recombination_kromozoms = []
@@ -255,7 +264,7 @@ for i in range(generation_number):
     mutation_kromozoms = []
     mutation_kromozoms = Mutation_main(recombination_kromozoms, mutation_percentage,1,False)
     kromozoms = mutation_kromozoms
-
+path = list_to_string(output_kromozoms_class)
 plt.plot(index, best,label="best_score")
 plt.plot(index, worst, label="worst_score")
 plt.plot(index, average, label="average_score")
@@ -264,3 +273,95 @@ plt.xlabel("Generation")
 plt.ylabel("Score")
 plt.legend()
 plt.show()
+high_score = selected_kromozoms_class[0].score
+wn = turtle.Screen()
+wn.bgcolor("blue")
+mario = turtle.Turtle()
+mario.penup()
+mario.goto(((len(level) - len(level) / 2) + 1) * -14.7, -22.5)
+mario.shape("turtle")
+mario.color("purple")
+mario.speed(0.5)
+earth = turtle.Turtle()
+earth.penup()
+earth.goto(-400,-250)
+earth.pendown()
+earth.shape("square")
+earth.shapesize(20,120)
+earth.color("maroon")
+field = turtle.Turtle()
+field.penup()
+field.goto(-400,-50)
+field.pendown()
+field.shape("square")
+field.shapesize(2,120)
+field.color("green")
+sun = turtle.Turtle()
+sun.penup()
+sun.goto(300,300)
+sun.pendown()
+sun.shape("circle")
+sun.shapesize(5)
+sun.color("yellow")
+
+for i in range(1, len(level)):
+    current_step = level[i]
+    if current_step == 'G':
+        Gumpa = turtle.Turtle()
+        Gumpa.penup()
+        Gumpa.goto((i - len(level) / 2) * 14.7 , -25)
+        Gumpa.pendown()
+        Gumpa.shape("square")
+        Gumpa.shapesize(0.5)
+        Gumpa.color("red")
+    if current_step == 'L':
+        Lukido = turtle.Turtle()
+        Lukido.penup()
+        Lukido.goto((i - len(level) / 2) * 14.7, 0)
+        Lukido.pendown()
+        Lukido.shape("circle")
+        Lukido.shapesize(0.5)
+        Lukido.color("red")
+    if current_step == 'M':
+        Mashroom = turtle.Turtle()
+        Mashroom.penup()
+        Mashroom.goto((i - len(level) / 2) * 14.7, -25)
+        Mashroom.pendown()
+        Mashroom.shape("triangle")
+        Mashroom.shapesize(0.5)
+        Mashroom.color("gold")
+
+flag = turtle.Turtle()
+flag.penup()
+flag.goto(((len(level) - len(level) / 2) + 1) * 14.7, -25)
+flag.pendown()
+flag.left(90)
+flag.forward(25)
+flag.color("green")
+flag.right(90)
+flag.forward(8)
+mario.pendown()
+mario.forward(7.35)
+for i in range(len(path)):
+    if i >= 2:
+        if path[i - 2] == '1':
+            mario.right(90)
+            mario.forward(25)
+            mario.left(90)
+        if path[i - 2] == '2':
+            mario.left(90)
+            mario.forward(5)
+            mario.right(90)
+    if path[i] == '0':
+        mario.forward(14.7)
+    if path[i] == '1':
+        mario.forward(14.7)
+        mario.left(90)
+        mario.forward(25)
+        mario.right(90)
+    if path[i] == '2':
+        mario.forward(14.7)
+        mario.right(90)
+        mario.forward(5)
+        mario.left(90)
+wn.mainloop()
