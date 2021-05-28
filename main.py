@@ -216,6 +216,7 @@ def list_to_string(list_int):
 kromozoms = []
 kromozoms_class = []
 level = input("enter level : ")
+population = int(input("population number : "))
 generation_number = int(input("Generation number : "))
 chance_number = int(input("1=best selection or 2=best_chance selection?(1/2) : "))
 recombination_dot_number = input("single dot recombination : (y/n)")
@@ -228,12 +229,12 @@ if chance_number == 1:
     chance = False
 else:
     chance = True
-consider_win = input("do you care about wining? : (y/n)")
+consider_win = input("care about wining : (y/n)")
 if consider_win == 'y':
     win = True
 else:
     win = False
-kromozoms = new_kromozoms(len(level), 200)
+kromozoms = new_kromozoms(len(level), population)
 print("start")
 best = []
 index = []
