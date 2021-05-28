@@ -1,4 +1,3 @@
-import operator
 import random
 from random import randint
 import turtle
@@ -96,7 +95,7 @@ def competenceFunction(level, kromozom):
     if kromozom[len(kromozom) - 1] == 1:
         score += 10
 
-    if live:
+    if live and win:
         score *= 1.1
 
     # print(sequence, step, score, live)
@@ -216,19 +215,24 @@ def list_to_string(list_int):
 
 kromozoms = []
 kromozoms_class = []
-level = input("enter level:")
-generation_number = int(input("Generation number:"))
-chance_number = int(input("1=best selection or 2=best_chance selection?(1/2):"))
-recombination_dot_number = input("single dot recombination:(y/n)")
+level = input("enter level : ")
+generation_number = int(input("Generation number : "))
+chance_number = int(input("1=best selection or 2=best_chance selection?(1/2) : "))
+recombination_dot_number = input("single dot recombination : (y/n)")
 if recombination_dot_number == 'y':
     single_dot = True
 else:
     single_dot = False
-mutation_percentage = int(input("Percentage of Mutation :"))
+mutation_percentage = int(input("Percentage of Mutation : "))
 if chance_number == 1:
     chance = False
 else:
     chance = True
+consider_win = input("do you care about wining? : (y/n)")
+if consider_win == 'y':
+    win = True
+else:
+    win = False
 kromozoms = new_kromozoms(len(level), 200)
 print("start")
 best = []
@@ -274,6 +278,7 @@ plt.ylabel("Score")
 plt.legend()
 plt.show()
 high_score = selected_kromozoms_class[0].score
+alive = selected_kromozoms_class[0].live
 wn = turtle.Screen()
 wn.bgcolor("blue")
 mario = turtle.Turtle()
@@ -281,7 +286,6 @@ mario.penup()
 mario.goto(((len(level) - len(level) / 2) + 1) * -14.7, -22.5)
 mario.shape("turtle")
 mario.color("purple")
-mario.speed(0.5)
 earth = turtle.Turtle()
 earth.penup()
 earth.goto(-400,-250)
@@ -303,6 +307,15 @@ sun.pendown()
 sun.shape("circle")
 sun.shapesize(5)
 sun.color("yellow")
+pen = turtle.Turtle()
+pen.speed(0)
+pen.shape("square")
+pen.color("white")
+pen.penup()
+pen.hideturtle()
+pen.goto(-450, 300)
+pen.write("Score : {}   alive : {} ".format(
+            high_score, alive), align="center", font=("candara", 24, "bold"))
 
 for i in range(1, len(level)):
     current_step = level[i]
@@ -341,6 +354,7 @@ flag.color("green")
 flag.right(90)
 flag.forward(8)
 mario.pendown()
+mario.speed(2)
 mario.forward(7.35)
 for i in range(len(path)):
     if i >= 2:
